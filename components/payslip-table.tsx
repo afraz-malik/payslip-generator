@@ -32,8 +32,7 @@ export function PayslipTable({
     useState<Payslip | null>(null);
   const [isPDFModalOpen, setIsPDFModalOpen] = useState(false);
 
-  const handlePreviewPDF = (payslip: Payslip, e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent row click
+  const handlePreviewPDF = (payslip: Payslip) => {
     setSelectedPayslipForPDF(payslip);
     setIsPDFModalOpen(true);
   };
@@ -48,17 +47,22 @@ export function PayslipTable({
       employeeName: `${payslip.employeeName} (Copy)`,
     };
 
-    // Add to localStorage
-    const existingPayslips = JSON.parse(
-      localStorage.getItem("payslips") || "[]"
-    );
-    localStorage.setItem(
-      "payslips",
-      JSON.stringify([...existingPayslips, duplicatedPayslip])
-    );
+  
+    savePayslips([...payslips, duplicatedPayslip]).then(el => 
+      // Reload the page to refresh the data
+      window.location.reload()
+    )
+  };
 
-    // Reload the page to refresh the data
-    window.location.reload();
+  const savePayslips = async (slips:any) => {
+    const res = await fetch("/api/payslips", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ payslips:slips}),
+    });
+
+    const data = await res.json();
+    console.log("Saved to SQLite:", data);
   };
 
   if (payslips.length === 0) {
@@ -89,7 +93,7 @@ export function PayslipTable({
               <TableRow
                 key={payslip.id}
                 className="cursor-pointer hover:bg-muted/50"
-                onClick={(e) => handlePreviewPDF(payslip, e)}
+                onClick={(e) => handlePreviewPDF(payslip)}
                
               >
                 <TableCell className="font-medium">
@@ -112,11 +116,13 @@ export function PayslipTable({
                     <Button
                       variant="outline"
                       size="icon"
-                      onClick={() => onSelectPayslip(payslip)}
-                      title="Preview PDF"
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent row click
+                        onSelectPayslip(payslip)}}
+                      title="Edit Slip"
                     >
                       <Edit className="h-4 w-4" />
-                      <span className="sr-only">Preview PDF</span>
+                      <span className="sr-only">Edit Slip</span>
                     </Button>
                     <Button
                       variant="outline"
