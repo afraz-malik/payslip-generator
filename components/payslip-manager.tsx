@@ -13,19 +13,38 @@ export function PayslipManager() {
   const [selectedMonth, setSelectedMonth] = useState<string>("")
   const [selectedPayslip, setSelectedPayslip] = useState<Payslip | null>(null)
 
-  // Load payslips from localStorage on component mount
-  useEffect(() => {
-    const savedPayslips = localStorage.getItem("payslips")
+  const getPayslips = async () => {
+    const res = await fetch('/api/payslips', {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+  
+    const savedPayslips = await res.json();
     if (savedPayslips) {
       const parsedPayslips = JSON.parse(savedPayslips)
       setPayslips(parsedPayslips)
       setFilteredPayslips(parsedPayslips)
     }
+  };
+  // Load payslips from localStorage on component mount
+  useEffect(() => {
+    getPayslips()
   }, [])
 
+  const savePayslips = async () => {
+    const res = await fetch('/api/payslips', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ payslips }),
+    });
+  
+    const data = await res.json();
+    console.log('Saved to SQLite:', data);
+  };
+  
   // Save payslips to localStorage whenever they change
   useEffect(() => {
-    localStorage.setItem("payslips", JSON.stringify(payslips))
+    savePayslips()
 
     // Apply filter when payslips or selectedMonth changes
     if (selectedMonth) {
