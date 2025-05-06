@@ -218,7 +218,7 @@ export function PayslipForm({
   };
 
   return (
-    <Card>
+    <Card className="w-full">
       <CardHeader>
         <CardTitle>
           {selectedPayslip ? "Edit Payslip" : "Add New Payslip"}

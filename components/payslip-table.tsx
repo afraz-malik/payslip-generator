@@ -1,55 +1,72 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import type { Payslip } from "@/types/payslip"
-import { Trash2, Copy, Eye } from "lucide-react"
-import { v4 as uuidv4 } from "uuid"
-import { PDFPreviewModal } from "./pdf-preview-modal"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import type { Payslip } from "@/types/payslip";
+import { Trash2, Copy, Eye } from "lucide-react";
+import { v4 as uuidv4 } from "uuid";
+import { PDFPreviewModal } from "./pdf-preview-modal";
 
 interface PayslipTableProps {
-  payslips: Payslip[]
-  onDeletePayslip: (id: string) => void
-  onSelectPayslip: (payslip: Payslip) => void
+  payslips: Payslip[];
+  onDeletePayslip: (id: string) => void;
+  onSelectPayslip: (payslip: Payslip) => void;
 }
 
-export function PayslipTable({ payslips, onDeletePayslip, onSelectPayslip }: PayslipTableProps) {
-  const [selectedPayslipForPDF, setSelectedPayslipForPDF] = useState<Payslip | null>(null)
-  const [isPDFModalOpen, setIsPDFModalOpen] = useState(false)
+export function PayslipTable({
+  payslips,
+  onDeletePayslip,
+  onSelectPayslip,
+}: PayslipTableProps) {
+  const [selectedPayslipForPDF, setSelectedPayslipForPDF] =
+    useState<Payslip | null>(null);
+  const [isPDFModalOpen, setIsPDFModalOpen] = useState(false);
 
   const handlePreviewPDF = (payslip: Payslip, e: React.MouseEvent) => {
-    e.stopPropagation() // Prevent row click
-    setSelectedPayslipForPDF(payslip)
-    setIsPDFModalOpen(true)
-  }
+    e.stopPropagation(); // Prevent row click
+    setSelectedPayslipForPDF(payslip);
+    setIsPDFModalOpen(true);
+  };
 
   const handleDuplicatePayslip = (payslip: Payslip, e: React.MouseEvent) => {
-    e.stopPropagation() // Prevent row click
+    e.stopPropagation(); // Prevent row click
 
     // Create a duplicate with a new ID
     const duplicatedPayslip: Payslip = {
       ...payslip,
       id: uuidv4(),
       employeeName: `${payslip.employeeName} (Copy)`,
-    }
+    };
 
     // Add to localStorage
-    const existingPayslips = JSON.parse(localStorage.getItem("payslips") || "[]")
-    localStorage.setItem("payslips", JSON.stringify([...existingPayslips, duplicatedPayslip]))
+    const existingPayslips = JSON.parse(
+      localStorage.getItem("payslips") || "[]"
+    );
+    localStorage.setItem(
+      "payslips",
+      JSON.stringify([...existingPayslips, duplicatedPayslip])
+    );
 
     // Reload the page to refresh the data
-    window.location.reload()
-  }
+    window.location.reload();
+  };
 
   if (payslips.length === 0) {
     return (
       <div className="text-center p-8 border rounded-lg bg-muted/50">
         <p>No payslips found. Add a new payslip to get started.</p>
       </div>
-    )
+    );
   }
 
   return (
@@ -61,6 +78,8 @@ export function PayslipTable({ payslips, onDeletePayslip, onSelectPayslip }: Pay
               <TableHead>Employee Name</TableHead>
               <TableHead>Pay Period</TableHead>
               <TableHead>Department</TableHead>
+              <TableHead className="text-right">Total Earnings</TableHead>
+              <TableHead className="text-right">Total Deductions</TableHead>
               <TableHead className="text-right">Net Pay</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
@@ -72,10 +91,21 @@ export function PayslipTable({ payslips, onDeletePayslip, onSelectPayslip }: Pay
                 className="cursor-pointer hover:bg-muted/50"
                 onClick={() => onSelectPayslip(payslip)}
               >
-                <TableCell className="font-medium">{payslip.employeeName}</TableCell>
+                <TableCell className="font-medium">
+                  {payslip.employeeName}
+                </TableCell>
                 <TableCell>{payslip.payPeriod}</TableCell>
                 <TableCell>{payslip.department}</TableCell>
-                <TableCell className="text-right">{payslip.netPay.toLocaleString()}</TableCell>
+
+                <TableCell className="text-right">
+                  {payslip.totalEarnings.toLocaleString()}
+                </TableCell>
+                <TableCell className="text-right">
+                  {payslip.totalDeductions.toLocaleString()}
+                </TableCell>
+                <TableCell className="text-right">
+                  {payslip.netPay.toLocaleString()}
+                </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
                     <Button
@@ -100,8 +130,8 @@ export function PayslipTable({ payslips, onDeletePayslip, onSelectPayslip }: Pay
                       variant="outline"
                       size="icon"
                       onClick={(e) => {
-                        e.stopPropagation() // Prevent row click
-                        onDeletePayslip(payslip.id)
+                        e.stopPropagation(); // Prevent row click
+                        onDeletePayslip(payslip.id);
                       }}
                       title="Delete"
                     >
@@ -122,5 +152,5 @@ export function PayslipTable({ payslips, onDeletePayslip, onSelectPayslip }: Pay
         onClose={() => setIsPDFModalOpen(false)}
       />
     </>
-  )
+  );
 }

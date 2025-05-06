@@ -1,5 +1,5 @@
-import { v4 as uuidv4 } from "uuid"
-import type { Payslip, PayItem } from "@/types/payslip"
+import { v4 as uuidv4 } from "uuid";
+import type { Payslip, PayItem } from "@/types/payslip";
 
 // Sample custom earnings
 const sampleCustomEarnings1: PayItem[] = [
@@ -13,7 +13,7 @@ const sampleCustomEarnings1: PayItem[] = [
     title: "Overtime",
     amount: 5000,
   },
-]
+];
 
 const sampleCustomEarnings2: PayItem[] = [
   {
@@ -21,7 +21,7 @@ const sampleCustomEarnings2: PayItem[] = [
     title: "Performance Bonus",
     amount: 15000,
   },
-]
+];
 
 // Sample custom deductions
 const sampleCustomDeductions1: PayItem[] = [
@@ -35,7 +35,7 @@ const sampleCustomDeductions1: PayItem[] = [
     title: "Professional Tax",
     amount: 500,
   },
-]
+];
 
 const sampleCustomDeductions2: PayItem[] = [
   {
@@ -48,7 +48,15 @@ const sampleCustomDeductions2: PayItem[] = [
     title: "Health Insurance",
     amount: 1500,
   },
-]
+];
+
+const now = new Date();
+now.setMonth(now.getMonth() - 1); // Move to previous month
+
+const thisMonth = now.toLocaleDateString("en-US", {
+  month: "long",
+  year: "numeric",
+});
 
 // Sample payslips
 export const samplePayslips: Payslip[] = [
@@ -56,7 +64,7 @@ export const samplePayslips: Payslip[] = [
     id: uuidv4(),
     employeeName: "Muhammad Sohail",
     designation: "Full Stack Developer",
-    payPeriod: "February 2025",
+    payPeriod: thisMonth,
     department: "Dev",
     accountNumber: "01860010055036760018",
     daysWorked: "Full",
@@ -71,59 +79,112 @@ export const samplePayslips: Payslip[] = [
   },
   {
     id: uuidv4(),
-    employeeName: "Awais Tahir",
-    designation: "MERN Stack Developer",
-    payPeriod: "February 2025",
+    employeeName: "Awais Akram",
+    designation: "Full Stack Developer",
+    payPeriod: thisMonth,
     department: "Dev",
-    accountNumber: "18527992591103",
+    accountNumber: "0002117992108403",
     daysWorked: "Full",
-    basicPay: 86000,
+    basicPay: 65000,
     medicalAllowance: 5000,
     incentivePay: 0,
     customEarnings: [],
     customDeductions: [],
-    totalEarnings: 91000,
+    totalEarnings: 70000,
     totalDeductions: 0,
-    netPay: 91000,
+    netPay: 70000,
   },
   {
     id: uuidv4(),
-    employeeName: "Sarah Khan",
-    designation: "UI/UX Designer",
-    payPeriod: "March 2025",
-    department: "Design",
-    accountNumber: "01860010055789012",
+    employeeName: "Awais Tahir",
+    designation: "Full Stack Developer",
+    payPeriod: thisMonth,
+    department: "Dev",
+    accountNumber: "018527992591103",
     daysWorked: "Full",
-    basicPay: 65000,
+    basicPay: 88000,
     medicalAllowance: 5000,
-    incentivePay: 8000,
-    customEarnings: sampleCustomEarnings1,
-    customDeductions: sampleCustomDeductions1,
-    totalEarnings: 88000, // 65000 + 5000 + 8000 + 10000 + 5000
-    totalDeductions: 2500, // 2000 + 500
-    netPay: 85500, // 88000 - 2500
+    incentivePay: 0,
+    customEarnings: [],
+    customDeductions: [],
+    totalEarnings: 93000,
+    totalDeductions: 0,
+    netPay: 93000,
   },
   {
     id: uuidv4(),
-    employeeName: "Ali Ahmed",
-    designation: "Project Manager",
-    payPeriod: "March 2025",
-    department: "Management",
-    accountNumber: "01860010055123456",
+    employeeName: "Shehram Azam",
+    designation: "QA Eng.",
+    payPeriod: thisMonth,
+    department: "QA",
+    accountNumber: "0098650107869536",
     daysWorked: "Full",
-    basicPay: 95000,
-    medicalAllowance: 8000,
-    incentivePay: 12000,
-    customEarnings: sampleCustomEarnings2,
-    customDeductions: sampleCustomDeductions2,
-    totalEarnings: 130000, // 95000 + 8000 + 12000 + 15000
-    totalDeductions: 4500, // 3000 + 1500
-    netPay: 125500, // 130000 - 4500
+    basicPay: 35000,
+    medicalAllowance: 5000,
+    incentivePay: 0,
+    customEarnings: [],
+    customDeductions: [],
+    totalEarnings: 40000,
+    totalDeductions: 0,
+    netPay: 40000,
   },
-]
+  {
+    id: uuidv4(),
+    employeeName: "Muhammad Ahmad",
+    designation: "QA Eng.",
+    payPeriod: thisMonth,
+    department: "QA",
+    accountNumber: "01287903296903",
+    daysWorked: "Full",
+    basicPay: 30000,
+    medicalAllowance: 5000,
+    incentivePay: 0,
+    customEarnings: [],
+    customDeductions: [],
+    totalEarnings: 35000,
+    totalDeductions: 0,
+    netPay: 35000,
+  },
+  {
+    id: uuidv4(),
+    employeeName: "Ahsan Ahmad",
+    designation: "Ui Ux Designer",
+    payPeriod: thisMonth,
+    department: "Designer",
+    accountNumber: "02410105656342",
+    daysWorked: "Full",
+    basicPay: 50000,
+    medicalAllowance: 5000,
+    incentivePay: 0,
+    customEarnings: [],
+    customDeductions: [],
+    totalEarnings: 55000,
+    totalDeductions: 0,
+    netPay: 55000,
+  },
+  {
+    id: uuidv4(),
+    employeeName: "Ali Hamza",
+    designation: "Full Stack Developer",
+    payPeriod: thisMonth,
+    department: "Dev",
+    accountNumber: "06187902122003",
+    daysWorked: "Full",
+    basicPay: 30000,
+    medicalAllowance: 5000,
+    incentivePay: 0,
+    customEarnings: [],
+    customDeductions: [],
+    totalEarnings: 35000,
+    totalDeductions: 0,
+    netPay: 35000,
+  },
+];
 
 // Function to get a template payslip (for reuse)
-export const getTemplatePayslip = (templateName: string): Omit<Payslip, "id" | "employeeName" | "payPeriod"> => {
+export const getTemplatePayslip = (
+  templateName: string
+): Omit<Payslip, "id" | "employeeName" | "payPeriod"> => {
   switch (templateName) {
     case "developer":
       return {
@@ -139,7 +200,7 @@ export const getTemplatePayslip = (templateName: string): Omit<Payslip, "id" | "
         totalEarnings: 57000,
         totalDeductions: 0,
         netPay: 57000,
-      }
+      };
     case "designer":
       return {
         designation: "UI/UX Designer",
@@ -154,7 +215,7 @@ export const getTemplatePayslip = (templateName: string): Omit<Payslip, "id" | "
         totalEarnings: 88000,
         totalDeductions: 2500,
         netPay: 85500,
-      }
+      };
     case "manager":
       return {
         designation: "Project Manager",
@@ -169,7 +230,7 @@ export const getTemplatePayslip = (templateName: string): Omit<Payslip, "id" | "
         totalEarnings: 130000,
         totalDeductions: 4500,
         netPay: 125500,
-      }
+      };
     default:
       return {
         designation: "",
@@ -184,6 +245,6 @@ export const getTemplatePayslip = (templateName: string): Omit<Payslip, "id" | "
         totalEarnings: 0,
         totalDeductions: 0,
         netPay: 0,
-      }
+      };
   }
-}
+};
