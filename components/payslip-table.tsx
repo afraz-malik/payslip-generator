@@ -13,7 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { Payslip } from "@/types/payslip";
-import { Trash2, Copy, Eye } from "lucide-react";
+import { Trash2, Copy, Eye, Edit } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import { PDFPreviewModal } from "./pdf-preview-modal";
 
@@ -89,7 +89,8 @@ export function PayslipTable({
               <TableRow
                 key={payslip.id}
                 className="cursor-pointer hover:bg-muted/50"
-                onClick={() => onSelectPayslip(payslip)}
+                onClick={(e) => handlePreviewPDF(payslip, e)}
+               
               >
                 <TableCell className="font-medium">
                   {payslip.employeeName}
@@ -111,10 +112,10 @@ export function PayslipTable({
                     <Button
                       variant="outline"
                       size="icon"
-                      onClick={(e) => handlePreviewPDF(payslip, e)}
+                      onClick={() => onSelectPayslip(payslip)}
                       title="Preview PDF"
                     >
-                      <Eye className="h-4 w-4" />
+                      <Edit className="h-4 w-4" />
                       <span className="sr-only">Preview PDF</span>
                     </Button>
                     <Button
