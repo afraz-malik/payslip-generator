@@ -10,26 +10,31 @@ export const PayslipPDF = React.forwardRef<HTMLDivElement, PayslipPDFProps>(
     return (
       <div
         ref={ref}
-        className="bg-white relative w-[210mm] min-h-[297mm] mx-auto p-12 text-black"
+        className="bg-white relative w-[210mm] pt-12 pl-3 min-h-[297mm] mx-auto font-sans  text-black"
       >
+        {/* Water mark */}
         <img
-          className="absolute -z-1 opacity-20  top-[400px] w-[600px] left-1/2 -translate-x-1/2 -translate-y-1/2"
+          className="absolute -z-1 opacity-20  top-[500px] w-[600px] left-1/2 -translate-x-1/2 -translate-y-1/2"
           src="/logo.png"
         />
         {/* Header */}
-        <div className=" text-white  p-0 flex w-full justify-center items-center">
+        <div className=" text-white  px-12 flex w-full justify-center items-center">
           <img src={"/logo.png"} className="w-20 h-20" />
           <h1
-            style={{ fontFamily: "Cambria, serif" }}
-            className="text-3xl text-[#375f91]  w-full font-bold text-left tracking-widest"
+            style={{ fontFamily: "sans-serif" }}
+            className="text-[2rem] text-[#375f91] -mt-4 w-full font-medium  text-left tracking-widest"
           >
-            C I P H E R &nbsp; D E V E L O P E R S
+            Cipher Developers
           </h1>
         </div>
-        <hr className="bg-[#375f91] h-2" />
-
+        {/* <hr className="bg-[#375f91] h-2 w-[90%] mx-auto" /> */}
+        <div className="w-full text-center my-8">
+          <b> To Whom It May Concern</b>
+          <br /> This is to certify that the following is the official salary
+          slip for the mentioned period.
+        </div>
         {/* Employee Details */}
-        <div className="">
+        <div className="px-16">
           <br />
           <div className="grid grid-cols-2 ">
             <div className="p-1 ">
@@ -79,28 +84,32 @@ export const PayslipPDF = React.forwardRef<HTMLDivElement, PayslipPDFProps>(
 
           {/* Earnings and Deductions Headers */}
           <div className="grid grid-cols-4   font-bold">
-            <div className="p-1 border-b-2 border-black text-left">
+            <div className="p-1 border-b-2 border-black pb-2 text-left">
               Earnings
             </div>
-            <div className="p-1 border-b-2 border-black text-right">Amount</div>
-            <div className="p-1 border-b-2 border-black text-left">
+            <div className="p-1 border-b-2 border-black pb-2 text-right">
+              Amount
+            </div>
+            <div className="p-1 border-b-2 border-black pb-2 text-left">
               Deductions
             </div>
-            <div className="p-1 border-b-2 border-black text-right">Amount</div>
+            <div className="p-1 border-b-2 border-black pb-2 text-right">
+              Amount
+            </div>
           </div>
 
           {/* Standard Earnings and Deductions */}
           <div className="grid grid-cols-4 ">
-            <div className="p-1 border-b-2 border-gray-300">Basic Pay</div>
-            <div className="p-1 border-b-2 border-gray-300 text-right">
+            <div className="p-1 pb-2 border-b-2 border-gray-300">Basic Pay</div>
+            <div className="p-1 pb-2 border-b-2 border-gray-300 text-right">
               {payslip.basicPay.toLocaleString()}
             </div>
-            <div className="p-1 border-b-2 border-gray-300">
+            <div className="p-1 pb-2 border-b-2 border-gray-300">
               {payslip.customDeductions.length > 0
                 ? payslip.customDeductions[0].title
                 : "Provident Fund"}
             </div>
-            <div className="p-1 border-b-2 border-gray-300 text-right">
+            <div className="p-1 pb-2 border-b-2 border-gray-300 text-right">
               {payslip.customDeductions.length > 0
                 ? payslip.customDeductions[0].amount.toLocaleString()
                 : "-"}
@@ -108,18 +117,18 @@ export const PayslipPDF = React.forwardRef<HTMLDivElement, PayslipPDFProps>(
           </div>
 
           <div className="grid grid-cols-4 ">
-            <div className="p-1 border-b-2 border-gray-300">
+            <div className="p-1 pb-2 border-b-2 border-gray-300">
               Medical Allowance
             </div>
-            <div className="p-1 border-b-2 border-gray-300 text-right">
+            <div className="p-1 pb-2 border-b-2 border-gray-300 text-right">
               {payslip.medicalAllowance.toLocaleString()}
             </div>
-            <div className="p-1 border-b-2 border-gray-300">
+            <div className="p-1 pb-2 border-b-2 border-gray-300">
               {payslip.customDeductions.length > 1
                 ? payslip.customDeductions[1].title
                 : "Professional Tax"}
             </div>
-            <div className="p-1 border-b-2 border-gray-300 text-right">
+            <div className="p-1 pb-2 border-b-2 border-gray-300 text-right">
               {payslip.customDeductions.length > 1
                 ? payslip.customDeductions[1].amount.toLocaleString()
                 : "-"}
@@ -127,18 +136,20 @@ export const PayslipPDF = React.forwardRef<HTMLDivElement, PayslipPDFProps>(
           </div>
 
           <div className="grid grid-cols-4 ">
-            <div className="p-1 border-b-2 border-gray-300">Incentive Pay</div>
-            <div className="p-1 border-b-2 border-gray-300 text-right">
+            <div className="p-1 pb-2 border-b-2 border-gray-300">
+              Incentive Pay
+            </div>
+            <div className="p-1 pb-2 border-b-2 border-gray-300 text-right">
               {payslip.incentivePay > 0
                 ? payslip.incentivePay.toLocaleString()
                 : "-"}
             </div>
-            <div className="p-1 border-b-2 border-gray-300">
+            <div className="p-1 pb-2 border-b-2 border-gray-300">
               {payslip.customDeductions.length > 2
                 ? payslip.customDeductions[2].title
                 : ""}
             </div>
-            <div className="p-1 border-b-2 border-gray-300 text-right">
+            <div className="p-1 pb-2 border-b-2 border-gray-300 text-right">
               {payslip.customDeductions.length > 2
                 ? payslip.customDeductions[2].amount.toLocaleString()
                 : ""}
@@ -148,18 +159,18 @@ export const PayslipPDF = React.forwardRef<HTMLDivElement, PayslipPDFProps>(
           {/* Custom Earnings */}
           {payslip.customEarnings.map((earning, index) => (
             <div key={earning.id} className="grid grid-cols-4 ">
-              <div className="p-1 border-b-2 border-gray-300">
+              <div className="p-1 pb-2 border-b-2 border-gray-300">
                 {earning.title}
               </div>
-              <div className="p-1 border-b-2 border-gray-300 text-right">
+              <div className="p-1 pb-2 border-b-2 border-gray-300 text-right">
                 {earning.amount.toLocaleString()}
               </div>
-              <div className="p-1 border-b-2 border-gray-300">
+              <div className="p-1 pb-2 border-b-2 border-gray-300">
                 {payslip.customDeductions.length > index + 3
                   ? payslip.customDeductions[index + 3].title
                   : ""}
               </div>
-              <div className="p-1 border-b-2 border-gray-300 text-right">
+              <div className="p-1 pb-2 border-b-2 border-gray-300 text-right">
                 {payslip.customDeductions.length > index + 3
                   ? payslip.customDeductions[index + 3].amount.toLocaleString()
                   : ""}
@@ -174,12 +185,12 @@ export const PayslipPDF = React.forwardRef<HTMLDivElement, PayslipPDFProps>(
               .slice(payslip.customEarnings.length + 3)
               .map((deduction) => (
                 <div key={deduction.id} className="grid grid-cols-4 ">
-                  <div className="p-1 border-b-2 border-gray-300"></div>
-                  <div className="p-1 border-b-2 border-gray-300"></div>
-                  <div className="p-1 border-b-2 border-gray-300">
+                  <div className="p-1 pb-2 border-b-2 border-gray-300"></div>
+                  <div className="p-1 pb-2 border-b-2 border-gray-300"></div>
+                  <div className="p-1 pb-2 border-b-2 border-gray-300">
                     {deduction.title}
                   </div>
-                  <div className="p-1 border-b-2 border-gray-300 text-right">
+                  <div className="p-1 pb-2 border-b-2 border-gray-300 text-right">
                     {deduction.amount.toLocaleString()}
                   </div>
                 </div>
@@ -187,14 +198,16 @@ export const PayslipPDF = React.forwardRef<HTMLDivElement, PayslipPDFProps>(
 
           {/* Totals */}
           <div className="grid grid-cols-4  font-bold">
-            <div className="p-1 border-b-2 border-gray-300">Total Earnings</div>
-            <div className="p-1 border-b-2 border-gray-300 text-right">
+            <div className="p-1 pb-2 border-b-2 border-gray-300">
+              Total Earnings
+            </div>
+            <div className="p-1 pb-2 border-b-2 border-gray-300 text-right">
               {payslip.totalEarnings.toLocaleString()}
             </div>
-            <div className="p-1 border-b-2 border-gray-300">
+            <div className="p-1 pb-2 border-b-2 border-gray-300">
               Total Deductions
             </div>
-            <div className="p-1 border-b-2 border-gray-300 text-right">
+            <div className="p-1 pb-2 border-b-2 border-gray-300 text-right">
               {payslip.totalDeductions.toLocaleString()}
             </div>
           </div>
@@ -202,10 +215,10 @@ export const PayslipPDF = React.forwardRef<HTMLDivElement, PayslipPDFProps>(
           {/* Net Pay */}
           <div className="grid grid-cols-4 ">
             <div className="col-span-2"></div>
-            <div className="p-1 border-b-2 border-gray-300 font-bold">
+            <div className="p-1 pb-2 border-b-2 border-gray-300 font-bold">
               Net Pay
             </div>
-            <div className="p-1 border-b-2 border-gray-300 text-right font-bold">
+            <div className="p-1 pb-2 border-b-2 border-gray-300 text-right font-bold">
               {payslip.netPay.toLocaleString()}
             </div>
           </div>
@@ -216,10 +229,13 @@ export const PayslipPDF = React.forwardRef<HTMLDivElement, PayslipPDFProps>(
           </div>
           <br />
           <br />
-          {/* Footer */}
           <div className="p-1 font-bold text-center text-sm">
             This is system generated payslip and does not require any signature.
           </div>
+        </div>
+        {/* Footer */}
+        <div className="absolute bottom-10 my-auto">
+          <img src="/Footer.png" alt="Footer" />
         </div>
       </div>
     );

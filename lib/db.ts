@@ -1,6 +1,6 @@
-import Database from 'better-sqlite3';
+import Database from "better-sqlite3";
 
-const db = new Database('data.db');
+const db = new Database("temp/data.db");
 // Initialize table if it doesn't exist
 db.exec(`
     CREATE TABLE IF NOT EXISTS payslips (
