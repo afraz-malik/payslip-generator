@@ -167,7 +167,7 @@ export async function POST(req: NextRequest) {
         // Note: Microsoft Graph doesn't support multipart/alternative emails directly
         // Fallback is automatic if HTML fails to render, but Graph only allows one body
       },
-      saveToSentItems: "false", // Optional
+      // saveToSentItems: "false", // Optional
     });
     return NextResponse.json(
       { message: "Email sent successfully" },

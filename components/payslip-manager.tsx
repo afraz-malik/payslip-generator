@@ -63,6 +63,10 @@ export function PayslipManager() {
   };
 
   const handleDeletePayslip = (id: string) => {
+    const answer = window.confirm("Are you sure you want to delete ? ");
+    if (!answer) {
+      return;
+    }
     setPayslips((prev) => prev.filter((payslip) => payslip.id !== id));
     // Clear selection if the deleted payslip was selected
     if (selectedPayslip && selectedPayslip.id === id) {
