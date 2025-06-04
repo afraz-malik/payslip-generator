@@ -47,18 +47,17 @@ export function PayslipTable({
       employeeName: `${payslip.employeeName} (Copy)`,
     };
 
-  
-    savePayslips([...payslips, duplicatedPayslip]).then(el => 
+    savePayslips([...payslips, duplicatedPayslip]).then((el) =>
       // Reload the page to refresh the data
       window.location.reload()
-    )
+    );
   };
 
-  const savePayslips = async (slips:any) => {
+  const savePayslips = async (slips: any) => {
     const res = await fetch("/api/payslips", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ payslips:slips}),
+      body: JSON.stringify({ payslips: slips }),
     });
 
     const data = await res.json();
@@ -80,6 +79,7 @@ export function PayslipTable({
           <TableHeader>
             <TableRow>
               <TableHead>Employee Name</TableHead>
+              <TableHead>Employee Email</TableHead>
               <TableHead>Pay Period</TableHead>
               <TableHead>Department</TableHead>
               <TableHead className="text-right">Total Earnings</TableHead>
@@ -94,11 +94,11 @@ export function PayslipTable({
                 key={payslip.id}
                 className="cursor-pointer hover:bg-muted/50"
                 onClick={(e) => handlePreviewPDF(payslip)}
-               
               >
                 <TableCell className="font-medium">
                   {payslip.employeeName}
                 </TableCell>
+                <TableCell className="font-medium">{payslip.email}</TableCell>
                 <TableCell>{payslip.payPeriod}</TableCell>
                 <TableCell>{payslip.department}</TableCell>
 
@@ -118,7 +118,8 @@ export function PayslipTable({
                       size="icon"
                       onClick={(e) => {
                         e.stopPropagation(); // Prevent row click
-                        onSelectPayslip(payslip)}}
+                        onSelectPayslip(payslip);
+                      }}
                       title="Edit Slip"
                     >
                       <Edit className="h-4 w-4" />

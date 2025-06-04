@@ -10,7 +10,7 @@ export const PayslipPDF = React.forwardRef<HTMLDivElement, PayslipPDFProps>(
     return (
       <div
         ref={ref}
-        className="bg-white relative w-[210mm] pt-12 pl-3 min-h-[297mm] mx-auto font-sans  text-black"
+        className="bg-white relative w-[250mm] pt-12 pl-3 min-h-[297mm] mx-auto font-sans  text-black"
       >
         {/* Water mark */}
         <img

@@ -22,6 +22,7 @@ export function PayslipForm({
   const [formData, setFormData] = useState<Omit<Payslip, "id">>({
     employeeName: "",
     designation: "",
+    email: "",
     payPeriod: "",
     department: "",
     accountNumber: "",
@@ -43,6 +44,7 @@ export function PayslipForm({
         employeeName: selectedPayslip.employeeName,
         designation: selectedPayslip.designation,
         payPeriod: selectedPayslip.payPeriod,
+        email: selectedPayslip.email || "",
         department: selectedPayslip.department,
         accountNumber: selectedPayslip.accountNumber,
         daysWorked: selectedPayslip.daysWorked,
@@ -203,6 +205,7 @@ export function PayslipForm({
       employeeName: "",
       designation: "",
       payPeriod: "",
+      email: "",
       department: "",
       accountNumber: "",
       daysWorked: "Full",
@@ -236,6 +239,17 @@ export function PayslipForm({
                   id="employeeName"
                   name="employeeName"
                   value={formData.employeeName}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  name="email"
+                  value={formData.email}
                   onChange={handleChange}
                   required
                 />

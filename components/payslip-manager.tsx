@@ -1,15 +1,19 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { PayslipForm } from "./payslip-form";
 import { PayslipTable } from "./payslip-table";
 import { SampleDataLoader } from "./sample-data-loader";
 import type { Payslip } from "@/types/payslip";
+import { Button } from "./ui/button";
+import { PayslipPDF } from "./payslip-pdf";
+import { generatePDF } from "@/lib/pdf-generator";
+import { toast } from "sonner";
 
 export function PayslipManager() {
   const [payslips, setPayslips] = useState<Payslip[]>([]);
   const [selectedPayslip, setSelectedPayslip] = useState<Payslip | null>(null);
-
+  const hiddenPaySlipRef = useRef<React.RefObject<HTMLElement>>(undefined);
   const getPayslips = async () => {
     const res = await fetch("/api/payslips", {
       method: "GET",
@@ -77,6 +81,67 @@ export function PayslipManager() {
     setSelectedPayslip(null);
   };
 
+  const handleFinalizeAndSendEmail = async () => {
+    const password = window.prompt(
+      "You are about to trigger sensitive operation. Please enter master password"
+    );
+    if (password != "rootus3r") {
+      alert("Password failed");
+
+      return;
+    }
+    for (const payslip of payslips) {
+      await new Promise((resolve) => {
+        toast.promise(
+          new Promise(async (res, rej) => {
+            try {
+              setSelectedPayslip(payslip);
+              // Wait for the component to render
+              await new Promise((resolve) => setTimeout(resolve, 300));
+              if (hiddenPaySlipRef) {
+                console.log(hiddenPaySlipRef);
+
+                const pdfBlob = await generatePDF(
+                  payslip,
+                  hiddenPaySlipRef,
+                  true
+                );
+
+                if (pdfBlob) {
+                  const formData = new FormData();
+                  formData.append("file", pdfBlob, "payslip.pdf");
+                  formData.append("slip", JSON.stringify(payslip));
+
+                  await fetch("/api/send-payslip", {
+                    method: "POST",
+                    body: formData,
+                  });
+                } else {
+                  throw new Error("No Blob");
+                }
+              }
+              resolve(true);
+              res(true);
+            } catch (error) {
+              console.log(error);
+              rej(false);
+            }
+          }),
+          {
+            position: "top-right",
+            error: "Failed to send email to " + payslip.employeeName,
+            success: "Email sent successfully to  " + payslip.employeeName,
+            loading: "Sending email for " + payslip.employeeName,
+            duration: 9999999999,
+            closeButton: true,
+            richColors: true,
+          }
+        );
+      });
+    }
+    setSelectedPayslip(null);
+  };
+
   return (
     <div className="space-y-8">
       <div className="flex justify-between items-start gap-4 flex-col md:flex-row">
@@ -91,6 +156,16 @@ export function PayslipManager() {
         onDeletePayslip={handleDeletePayslip}
         onSelectPayslip={handleSelectPayslip}
       />
+      <Button
+        type="submit"
+        className="w-full"
+        onClick={() => handleFinalizeAndSendEmail()}
+      >
+        Finalize and send email
+      </Button>
+      {selectedPayslip && (
+        <PayslipPDF ref={hiddenPaySlipRef} payslip={selectedPayslip} />
+      )}
     </div>
   );
 }
