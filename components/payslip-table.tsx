@@ -19,12 +19,14 @@ import { PDFPreviewModal } from "./pdf-preview-modal";
 
 interface PayslipTableProps {
   payslips: Payslip[];
-  onDeletePayslip: (id: string) => void;
-  onSelectPayslip: (payslip: Payslip) => void;
+  hideActions?: boolean;
+  onDeletePayslip?: (id: string) => void;
+  onSelectPayslip?: (payslip: Payslip) => void;
 }
 
 export function PayslipTable({
   payslips,
+  hideActions,
   onDeletePayslip,
   onSelectPayslip,
 }: PayslipTableProps) {
@@ -85,7 +87,9 @@ export function PayslipTable({
               <TableHead className="text-right">Total Earnings</TableHead>
               <TableHead className="text-right">Total Deductions</TableHead>
               <TableHead className="text-right">Net Pay</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              {!hideActions && (
+                <TableHead className="text-right">Actions</TableHead>
+              )}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -111,43 +115,45 @@ export function PayslipTable({
                 <TableCell className="text-right">
                   {payslip.netPay.toLocaleString()}
                 </TableCell>
-                <TableCell className="text-right">
-                  <div className="flex justify-end gap-2">
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={(e) => {
-                        e.stopPropagation(); // Prevent row click
-                        onSelectPayslip(payslip);
-                      }}
-                      title="Edit Slip"
-                    >
-                      <Edit className="h-4 w-4" />
-                      <span className="sr-only">Edit Slip</span>
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={(e) => handleDuplicatePayslip(payslip, e)}
-                      title="Duplicate"
-                    >
-                      <Copy className="h-4 w-4" />
-                      <span className="sr-only">Duplicate</span>
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={(e) => {
-                        e.stopPropagation(); // Prevent row click
-                        onDeletePayslip(payslip.id);
-                      }}
-                      title="Delete"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                      <span className="sr-only">Delete</span>
-                    </Button>
-                  </div>
-                </TableCell>
+                {!hideActions && (
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent row click
+                          if (onSelectPayslip) onSelectPayslip(payslip);
+                        }}
+                        title="Edit Slip"
+                      >
+                        <Edit className="h-4 w-4" />
+                        <span className="sr-only">Edit Slip</span>
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={(e) => handleDuplicatePayslip(payslip, e)}
+                        title="Duplicate"
+                      >
+                        <Copy className="h-4 w-4" />
+                        <span className="sr-only">Duplicate</span>
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent row click
+                          if (onDeletePayslip) onDeletePayslip(payslip.id);
+                        }}
+                        title="Delete"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        <span className="sr-only">Delete</span>
+                      </Button>
+                    </div>
+                  </TableCell>
+                )}
               </TableRow>
             ))}
           </TableBody>

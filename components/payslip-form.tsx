@@ -275,6 +275,7 @@ export function PayslipForm({
                   onChange={handleChange}
                   placeholder="February 2025"
                   required
+                  type="month"
                 />
               </div>
 

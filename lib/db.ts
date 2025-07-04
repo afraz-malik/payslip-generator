@@ -7,5 +7,13 @@ db.exec(`
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       data TEXT NOT NULL
     );
+
+
+     CREATE TABLE IF NOT EXISTS monthly_payslips (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      date DATE NOT NULL,
+      data TEXT NOT NULL
+    );
   `);
+
 export default db;

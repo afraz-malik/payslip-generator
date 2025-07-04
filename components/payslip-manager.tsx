@@ -1,19 +1,23 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import { PayslipForm } from "./payslip-form";
-import { PayslipTable } from "./payslip-table";
-import { SampleDataLoader } from "./sample-data-loader";
 import type { Payslip } from "@/types/payslip";
-import { Button } from "./ui/button";
+import { useEffect, useRef, useState } from "react";
+import { PayslipForm } from "./payslip-form";
 import { PayslipPDF } from "./payslip-pdf";
-import { generatePDF } from "@/lib/pdf-generator";
-import { toast } from "sonner";
+import { PayslipTable } from "./payslip-table";
+import { Button } from "./ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
+
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import PayrollCards from "./payslipHistory";
 
 export function PayslipManager() {
   const [payslips, setPayslips] = useState<Payslip[]>([]);
   const [selectedPayslip, setSelectedPayslip] = useState<Payslip | null>(null);
-  const hiddenPaySlipRef = useRef<React.RefObject<HTMLElement>>(undefined);
+  const hiddenPaySlipRef = useRef<HTMLDivElement>(null);
+  const [history, setHistory] = useState([]);
+  const [selectedHistory, setSelectedHistory] = useState(null);
   const getPayslips = async () => {
     const res = await fetch("/api/payslips", {
       method: "GET",
@@ -25,7 +29,12 @@ export function PayslipManager() {
       const parsedPayslips = JSON.parse(savedPayslips[0].data);
       setPayslips(parsedPayslips);
     }
+
+    await fetch("/api/finalized-payslips")
+      .then((el) => el.json())
+      .then((el) => setHistory(el));
   };
+  const [isAddFormOpen, setIsAddFormOpen] = useState(false);
   // Load payslips from localStorage on component mount
   useEffect(() => {
     getPayslips();
@@ -60,6 +69,7 @@ export function PayslipManager() {
       // Add new payslip
       setPayslips((prev) => [...prev, newPayslip]);
     }
+    setIsAddFormOpen(false);
   };
 
   const handleDeletePayslip = (id: string) => {
@@ -76,6 +86,7 @@ export function PayslipManager() {
 
   const handleSelectPayslip = (payslip: Payslip) => {
     setSelectedPayslip(payslip);
+    setIsAddFormOpen(true);
   };
 
   const handleLoadSampleData = (sampleData: Payslip[]) => {
@@ -94,82 +105,193 @@ export function PayslipManager() {
 
       return;
     }
-    for (const payslip of payslips) {
-      await new Promise((resolve) => {
-        toast.promise(
-          new Promise(async (res, rej) => {
-            try {
-              setSelectedPayslip(payslip);
-              // Wait for the component to render
-              await new Promise((resolve) => setTimeout(resolve, 300));
-              if (hiddenPaySlipRef) {
-                console.log(hiddenPaySlipRef);
+    // for (const payslip of payslips) {
+    //   await new Promise((resolve) => {
+    //     toast.promise(
+    //       new Promise(async (res, rej) => {
+    //         try {
+    //           setSelectedPayslip(payslip);
+    //           // Wait for the component to render
+    //           await new Promise((resolve) => setTimeout(resolve, 300));
+    //           if (hiddenPaySlipRef) {
+    //             console.log(hiddenPaySlipRef);
 
-                const pdfBlob = await generatePDF(
-                  payslip,
-                  hiddenPaySlipRef,
-                  true
-                );
+    //             const pdfBlob = await generatePDF(
+    //               payslip,
+    //               hiddenPaySlipRef,
+    //               true
+    //             );
 
-                if (pdfBlob) {
-                  const formData = new FormData();
-                  formData.append("file", pdfBlob, "payslip.pdf");
-                  formData.append("slip", JSON.stringify(payslip));
+    //             if (pdfBlob) {
+    //               const formData = new FormData();
+    //               formData.append("file", pdfBlob, "payslip.pdf");
+    //               formData.append("slip", JSON.stringify(payslip));
 
-                  await fetch("/api/send-payslip", {
-                    method: "POST",
-                    body: formData,
-                  });
-                } else {
-                  throw new Error("No Blob");
-                }
-              }
-              resolve(true);
-              res(true);
-            } catch (error) {
-              console.log(error);
-              rej(false);
-            }
-          }),
-          {
-            position: "top-right",
-            error: "Failed to send email to " + payslip.employeeName,
-            success: "Email sent successfully to  " + payslip.employeeName,
-            loading: "Sending email for " + payslip.employeeName,
-            duration: 9999999999,
-            closeButton: true,
-            richColors: true,
-          }
-        );
-      });
-    }
+    //               await fetch("/api/send-payslip", {
+    //                 method: "POST",
+    //                 body: formData,
+    //               });
+    //             } else {
+    //               throw new Error("No Blob");
+    //             }
+    //           }
+    //           resolve(true);
+    //           res(true);
+    //         } catch (error) {
+    //           console.log(error);
+    //           rej(false);
+    //         }
+    //       }),
+    //       {
+    //         position: "top-right",
+    //         error: "Failed to send email to " + payslip.employeeName,
+    //         success: "Email sent successfully to  " + payslip.employeeName,
+    //         loading: "Sending email for " + payslip.employeeName,
+    //         duration: 9999999999,
+    //         closeButton: true,
+    //         richColors: true,
+    //       }
+    //     );
+    //   });
+    // }
     setSelectedPayslip(null);
+
+    await fetch("/api/finalized-payslips", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ month: new Date(), payslips }),
+    });
   };
 
   return (
     <div className="space-y-8">
-      <div className="flex justify-between items-start gap-4 flex-col md:flex-row">
-        <PayslipForm
-          onAddPayslip={handleAddPayslip}
-          selectedPayslip={selectedPayslip}
-        />
-        {/* <SampleDataLoader onLoadSampleData={handleLoadSampleData} /> */}
-      </div>
-      <PayslipTable
-        payslips={payslips}
-        onDeletePayslip={handleDeletePayslip}
-        onSelectPayslip={handleSelectPayslip}
-      />
-      <Button
-        type="submit"
-        className="w-full"
-        onClick={() => handleFinalizeAndSendEmail()}
-      >
-        Finalize and send email
-      </Button>
+      <Tabs defaultValue="employees">
+        <TabsList>
+          <TabsTrigger value="employees">Current Employees</TabsTrigger>
+          <TabsTrigger value="history">History</TabsTrigger>
+        </TabsList>
+        <TabsContent value="employees">
+          <Card className="w-full">
+            <CardHeader>
+              <CardTitle>
+                <div className="flex items-center justify-between">
+                  <h1>List of All Employees</h1>
+                  <Button onClick={() => setIsAddFormOpen(true)}>
+                    Add New Employee
+                  </Button>
+                </div>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col  gap-4 justify-between">
+              <PayslipTable
+                payslips={payslips}
+                onDeletePayslip={handleDeletePayslip}
+                onSelectPayslip={handleSelectPayslip}
+              />
+              <Button
+                type="submit"
+                className="w-full"
+                onClick={() => handleFinalizeAndSendEmail()}
+              >
+                Finalize and send email
+              </Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="history">
+          <div className="container mx-auto py-8 px-4">
+            <PayrollCards
+              data={history}
+              onCardClick={(data: any) => {
+                setSelectedHistory(data);
+              }}
+            />
+          </div>
+        </TabsContent>
+      </Tabs>
       {selectedPayslip && (
         <PayslipPDF ref={hiddenPaySlipRef} payslip={selectedPayslip} />
+      )}
+      {selectedHistory && (
+        <HistoryModal
+          data={selectedHistory}
+          onClose={() => setSelectedHistory(null)}
+        />
+      )}
+      {true && (
+        <div className="flex justify-between items-start gap-4 flex-col md:flex-row">
+          <PaySlipAddForm
+            isOpen={isAddFormOpen}
+            onClose={() => {
+              setSelectedPayslip(null);
+              setIsAddFormOpen(false);
+            }}
+            title={"hello"}
+            selectedPayslip={selectedPayslip}
+            handleAddPayslip={handleAddPayslip}
+          />
+          {/* <SampleDataLoader onLoadSampleData={handleLoadSampleData} /> */}
+        </div>
       )}
     </div>
   );
 }
+
+const PaySlipAddForm = ({
+  isOpen,
+  title,
+  onClose,
+  selectedPayslip,
+  handleAddPayslip,
+}: {
+  isOpen: any;
+  title: any;
+  onClose: any;
+  selectedPayslip: any;
+  handleAddPayslip: any;
+}) => {
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-5xl max-h-[90vh] overflow-auto">
+        <DialogHeader>
+          <DialogTitle>
+            {" "}
+            {/* {selectedPayslip ? "Edit Payslip" : "Add New Payslip"} */}
+          </DialogTitle>
+        </DialogHeader>
+
+        <div className=" overflow-auto max-h-[70vh]">
+          <PayslipForm
+            onAddPayslip={handleAddPayslip}
+            selectedPayslip={selectedPayslip}
+          />
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+const HistoryModal = ({ data, onClose }: { data: any; onClose: any }) => {
+  const [isOpen, setIsOpen] = useState(true);
+  return (
+    <Dialog
+      open={isOpen}
+      onOpenChange={() => {
+        setIsOpen(false);
+        onClose();
+      }}
+    >
+      <DialogContent className="max-w-5xl max-h-[90vh] overflow-auto">
+        <DialogHeader>
+          <DialogTitle> List of sent slips.</DialogTitle>
+        </DialogHeader>
+
+        <PayslipTable
+          hideActions
+          payslips={data}
+          // onDeletePayslip={handleDeletePayslip}
+          // onSelectPayslip={handleSelectPayslip}
+        />
+      </DialogContent>
+    </Dialog>
+  );
+};
