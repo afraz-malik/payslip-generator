@@ -11,6 +11,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import PayrollCards from "./payslipHistory";
+import { toast } from "sonner";
+import { generatePDF } from "@/lib/pdf-generator";
 
 export function PayslipManager() {
   const [payslips, setPayslips] = useState<Payslip[]>([]);
@@ -105,55 +107,55 @@ export function PayslipManager() {
 
       return;
     }
-    // for (const payslip of payslips) {
-    //   await new Promise((resolve) => {
-    //     toast.promise(
-    //       new Promise(async (res, rej) => {
-    //         try {
-    //           setSelectedPayslip(payslip);
-    //           // Wait for the component to render
-    //           await new Promise((resolve) => setTimeout(resolve, 300));
-    //           if (hiddenPaySlipRef) {
-    //             console.log(hiddenPaySlipRef);
+    for (const payslip of payslips) {
+      await new Promise((resolve) => {
+        toast.promise(
+          new Promise(async (res, rej) => {
+            try {
+              setSelectedPayslip(payslip);
+              // Wait for the component to render
+              await new Promise((resolve) => setTimeout(resolve, 300));
+              if (hiddenPaySlipRef) {
+                console.log(hiddenPaySlipRef);
 
-    //             const pdfBlob = await generatePDF(
-    //               payslip,
-    //               hiddenPaySlipRef,
-    //               true
-    //             );
+                const pdfBlob = await generatePDF(
+                  payslip,
+                  hiddenPaySlipRef,
+                  true
+                );
 
-    //             if (pdfBlob) {
-    //               const formData = new FormData();
-    //               formData.append("file", pdfBlob, "payslip.pdf");
-    //               formData.append("slip", JSON.stringify(payslip));
+                if (pdfBlob) {
+                  const formData = new FormData();
+                  formData.append("file", pdfBlob, "payslip.pdf");
+                  formData.append("slip", JSON.stringify(payslip));
 
-    //               await fetch("/api/send-payslip", {
-    //                 method: "POST",
-    //                 body: formData,
-    //               });
-    //             } else {
-    //               throw new Error("No Blob");
-    //             }
-    //           }
-    //           resolve(true);
-    //           res(true);
-    //         } catch (error) {
-    //           console.log(error);
-    //           rej(false);
-    //         }
-    //       }),
-    //       {
-    //         position: "top-right",
-    //         error: "Failed to send email to " + payslip.employeeName,
-    //         success: "Email sent successfully to  " + payslip.employeeName,
-    //         loading: "Sending email for " + payslip.employeeName,
-    //         duration: 9999999999,
-    //         closeButton: true,
-    //         richColors: true,
-    //       }
-    //     );
-    //   });
-    // }
+                  await fetch("/api/send-payslip", {
+                    method: "POST",
+                    body: formData,
+                  });
+                } else {
+                  throw new Error("No Blob");
+                }
+              }
+              resolve(true);
+              res(true);
+            } catch (error) {
+              console.log(error);
+              rej(false);
+            }
+          }),
+          {
+            position: "top-right",
+            error: "Failed to send email to " + payslip.employeeName,
+            success: "Email sent successfully to  " + payslip.employeeName,
+            loading: "Sending email for " + payslip.employeeName,
+            duration: 9999999999,
+            closeButton: true,
+            richColors: true,
+          }
+        );
+      });
+    }
     setSelectedPayslip(null);
 
     await fetch("/api/finalized-payslips", {
